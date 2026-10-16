@@ -1,11 +1,53 @@
 [
   {
-    "name": "example",
-    "title": "TODO(author): the first document this industry must produce",
-    "for_each": "select gen_random_uuid() as id, 'Example' as name",
-    "file": "name",
+    "name": "credential-file",
+    "title": "Provider credential file: review copy",
+    "for_each": "select id,code,name from providers order by code",
+    "file": "code",
     "sections": [
-      { "title": "Details", "sql": "select 'replace me' as item, $1::text as record_id" }
+      {
+        "title": "Practitioner",
+        "sql": "select code,name,jurisdiction,profession,owner from providers where id=$1"
+      },
+      {
+        "title": "Credentials and source checks",
+        "sql": "select code,kind,reference,issued_on,expires_on,evidence_ref,checked_on,verification_result,verification_source,verifier from credential_register where provider_id=$1 order by code"
+      },
+      {
+        "title": "Site decisions",
+        "sql": "select code,status,starts_on,ends_on,scope_review_ref,decision_ref,decision_by,decision_at from appointments where provider_id=$1 order by code",
+        "note": "A record of operator decisions. Not a practising certificate or authority to practise."
+      }
+    ]
+  },
+  {
+    "name": "renewal-request",
+    "title": "Draft credential evidence request",
+    "for_each": "select distinct p.id,p.code,p.name from providers p join credentials c on c.provider_id=p.id where p.active and c.expires_on<=CURRENT_DATE+60",
+    "file": "code",
+    "sections": [
+      {
+        "title": "Evidence to review",
+        "sql": "select code,kind,reference,expires_on,evidence_ref from credentials where provider_id=$1 and expires_on<=CURRENT_DATE+60 order by expires_on",
+        "note": "Check the live register and request updated evidence through your approved process. This draft has not been sent."
+      }
+    ]
+  },
+  {
+    "name": "appointment-review",
+    "title": "Draft site appointment review",
+    "for_each": "select id,code from appointments order by code",
+    "file": "code",
+    "sections": [
+      {
+        "title": "Record checks",
+        "sql": "select appointment,provider,site,kind,expires_on,checked_on,verification_result,finding from appointment_checks where appointment_id=$1 order by kind"
+      },
+      {
+        "title": "Recorded decision",
+        "sql": "select status,scope_review_ref,decision_ref,decision_by,decision_at from appointments where id=$1",
+        "note": "Human review of scope, conditions and primary sources remains required."
+      }
     ]
   }
 ]

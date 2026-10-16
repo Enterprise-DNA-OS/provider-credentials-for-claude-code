@@ -1,13 +1,36 @@
 [
   {
     "name": "week",
-    "title": "This week",
-    "subtitle": "Provider Credentials for Claude Code: what needs attention, rendered by npm run view",
+    "title": "Provider credential week",
+    "subtitle": "Fictional demo or operator records. Read-only record checks.",
     "sections": [
       {
-        "title": "Needs attention",
-        "note": "TODO(author): point this at the industry's attention view (overdue, stuck, quiet).",
-        "sql": "select 'replace me' as item, 'TODO(author)' as why"
+        "title": "Site readiness",
+        "sql": "select appointment,provider,site,status,gaps,findings from site_readiness order by appointment"
+      },
+      {
+        "title": "Renewals within sixty days",
+        "sql": "select * from renewal_queue order by days_left"
+      }
+    ]
+  },
+  {
+    "name": "verification",
+    "title": "Verification desk",
+    "sections": [
+      {
+        "title": "Recorded checks",
+        "sql": "select code,provider,kind,expires_on,checked_on,verification_result,verifier from credential_register order by provider,kind"
+      }
+    ]
+  },
+  {
+    "name": "committee",
+    "title": "Site approval committee",
+    "sections": [
+      {
+        "title": "Evidence gaps",
+        "sql": "select appointment,provider,site,kind,finding from appointment_checks where status<>'ended' order by appointment,kind"
       }
     ]
   }
