@@ -10,8 +10,12 @@
         "sql": "select code,name,jurisdiction,profession,owner from providers where id=$1"
       },
       {
-        "title": "Credentials and source checks",
-        "sql": "select code,kind,reference,issued_on,expires_on,evidence_ref,checked_on,verification_result,verification_source,verifier from credential_register where provider_id=$1 order by code"
+        "title": "Credential documents",
+        "sql": "select code,kind,reference,issued_on,expires_on,evidence_ref from credentials where provider_id=$1 order by code"
+      },
+      {
+        "title": "Independent checks",
+        "sql": "select code,checked_on,verification_result,verification_source,verifier from credential_register where provider_id=$1 order by code"
       },
       {
         "title": "Site decisions",
